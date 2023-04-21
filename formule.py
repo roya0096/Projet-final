@@ -4,7 +4,7 @@ from scipy.stats import norm
 
 
 class Options : # Formule pour calcule d'option
-
+    """ Cette classe nous permet de calculer la valeur d'un put et d'un call"""
     def __init__(self, S, X, T, r, sigma):
         self.S = S
         self.X = X
@@ -26,7 +26,7 @@ class Options : # Formule pour calcule d'option
     
 
 class Valeur : # Formule pour le calcul de la valeur entreprise
-
+    """ Cette classe nous permet de calculer la valeur intrisèque d'une entreprise """
     def __init__(self, Rm, Rf, fcf_0, fcf_futurs, beta, g, CB, BPA1, CBx, benifice ):
         self.Rm = Rm
         self.Rf = Rf
@@ -42,7 +42,8 @@ class Valeur : # Formule pour le calcul de la valeur entreprise
     def capm(self) :
         medaf = self.Rf + self.beta *(self.Rm - self.Rf)
         return medaf 
-    def croissane_1 (self) :
+    
+    def croissance_1 (self) :
         fcf_act = []
         i = 0
         for i in range(len(self.fcf_futurs)):
@@ -55,16 +56,16 @@ class Valeur : # Formule pour le calcul de la valeur entreprise
     
     def croissance_2 (self):
         V2 = (self.fcf_futurs[-1] * ( 1 + self.g)) / (Valeur.capm(self) - self.g) * ( 1 + Valeur.capm(self) ) ** (-len(self.fcf_futurs))
-        valeur_entre = Valeur.croissance_1 + V2
+        valeur_entre = Valeur.croissance_1(self) + V2
         return valeur_entre
     
     def multiple_CB (self):
-        valeur_cb : Valeur.croissane_1 + (self.benifice * self.CBx)/ (( 1 + Valeur.capm)**len(self.fcf_futurs))
+        valeur_cb = Valeur.croissance_1(self) + (self.benifice * self.CBx)/ (( 1 + Valeur.capm(self))**len(self.fcf_futurs))
         return valeur_cb
     
-   
 class Obligation:
-    def __init__ (self, d_mod, conv, delta_i, rend_exig, taux_coup,t,p):
+    """ Cette classe nous permet faire différent calcul sur les obligations"""
+    def __init__ (self, d_mod, conv, delta_i, rend_exig, taux_coup,t,p,):
         self.d_mod = d_mod
         self.conv = conv
         self.delta_i = delta_i
@@ -72,7 +73,7 @@ class Obligation:
         self.taux_coup = taux_coup
         self.t = t
         self.p = p
-
+        
     def variation_oblig (self): 
         delta_2 = pow(self.delta_i,2)
         var = (- self.d_mod * self.delta_i) + (delta_2) * (0.5 * self.conv)  
@@ -90,7 +91,7 @@ class Obligation:
         dur =[]
         valeur_actuelle = 0
 
-        for x in range(1,self.t+1):
+        for x in range(int(1//self.t)+1):
             terme = coup / (1 + rend_eche)**x
             valeur_actuelle += terme
             dur.append(x * terme)
@@ -105,11 +106,11 @@ class Obligation:
         coup = (10 * self.taux_coup) /2
         rend_eche = self.rend_exig / 100
 
-        conv = ((1 + rend_eche) / ((1 + rend_eche) * (1 + rend_eche) + coup / self.p)) * ((coup * self.t * (self.t + 1)) / ((1 + rend_eche) ** (self.t + 2))) + ((self.t + 1) / (1 + rend_eche)) * (Obligation.duree - (self.t / (1 + rend_eche)))
+        conv = ((1 + rend_eche) / ((1 + rend_eche) * (1 + rend_eche) + coup / self.p)) * ((coup * self.t * (self.t + 1)) / ((1 + rend_eche) ** (self.t + 2))) + ((self.t + 1) / (1 + rend_eche)) * (Obligation.duree(self) - (self.t / (1 + rend_eche)))
         return conv
 
 class Ratio :
-    
+    """ Cette classe nous permet de calculer les ratios de Sharpe, Treynor et de Jenson avec le CAPM qui est aussi calculé"""
     def __init__(self ,Rp ,sigma, beta, Rf, Rm):
         self.Rp = Rp
         self.sigma = sigma
