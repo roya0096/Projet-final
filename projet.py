@@ -50,7 +50,7 @@ elif choix == 'Obligation': # Cette section demande les informations pour être 
     rend_exige = st.number_input("Quel est le rendement de cette obligation ?",value=1.00)
     coup = st.number_input(" Quel est le taux de coupon de cette obligation ?",value=1.00)
     temp = st.number_input(" Combien reste t'il de période à cette obligation ?",value=1.00)
-    prix = st.number_input("Quelle est le prix présentement de l'obligation ? ",value=1.00)
+    prix = st.number_input("Quelle est le prix présentement de l'obligation ? ",value=1000.00)
 
     #On vient créer notre liste pour être en mesure de prendre faire le lien avec notre page formule
     obligation_1 = fm.Obligation(d_mod = dur, conv = convex, delta_i = delta_rend, rend_exig = rend_exige, taux_coup = coup ,t = temp ,p = prix)    
